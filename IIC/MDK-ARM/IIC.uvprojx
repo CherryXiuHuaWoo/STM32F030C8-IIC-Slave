@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F030x8</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F0xx_HAL_Driver/Inc;../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F0xx/Include;../Drivers/CMSIS/Include;..\USER</IncludePath>
+              <IncludePath>../Inc;  ../Drivers/STM32F0xx_HAL_Driver/Inc;  ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy;  ../Drivers/CMSIS/Device/ST/STM32F0xx/Include;  ../Drivers/CMSIS/Include;  ..\USER</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -422,6 +422,11 @@
           <GroupName>Application/User</GroupName>
           <Files>
             <File>
+              <FileName>I2CMasterCommunication.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\I2CMasterCommunication.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
@@ -455,11 +460,6 @@
               <FileName>stm32f0xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f0xx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>I2CSlaveCommunication.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\I2CSlaveCommunication.c</FilePath>
             </File>
           </Files>
         </Group>
