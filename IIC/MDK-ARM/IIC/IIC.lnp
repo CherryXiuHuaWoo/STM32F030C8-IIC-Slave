@@ -3,7 +3,6 @@
 "iic\i2cslavecommunication.o"
 "iic\main.o"
 "iic\gpio.o"
-"iic\dma.o"
 "iic\i2c.o"
 "iic\usart.o"
 "iic\stm32f0xx_it.o"

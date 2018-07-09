@@ -21,9 +21,12 @@
  
 void I2CSlaveInit(void)
 {
-	HAL_I2C_Slave_Receive_IT(&hi2c1, gI2CReadBuffer, I2C_READ_BYTES);
-	HAL_I2C_Slave_Transmit_IT(&hi2c1, gI2CWriteBuffer, I2C_WRITE_BYTES);
-	HAL_I2C_EnableListen_IT(&hi2c1);
+//	HAL_I2C_Slave_Receive_IT(&hi2c1, gI2CReadBuffer, I2C_READ_BYTES);
+//	HAL_I2C_Slave_Transmit_IT(&hi2c1, gI2CWriteBuffer, I2C_WRITE_BYTES);
+	if(HAL_I2C_EnableListen_IT(&hi2c1) != HAL_OK)
+	{
+		printf("HAL_I2C_EnableListen_IT Error\r\n");
+	}
 }
 
 
@@ -104,6 +107,8 @@ void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
 	if(hi2c->Instance == hi2c1.Instance)
 	{
+//		__HAL_I2C_CLEAR_FLAG(&hi2c1, I2C_FLAG_BERR| I2C_FLAG_ARLO | I2C_FLAG_OVR | I2C_FLAG_PECERR);
+////		__HAL_I2C_GENERATE_NACK(&hi2c1);
 		I2C_SaveReadDataToUsartUpdataBuffer(I2C_READ_BYTES);
 		gI2CReadDoneFlag = 1;
 	}
@@ -114,21 +119,45 @@ void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, ui
 {
 	if(hi2c->Instance == hi2c1.Instance)
 	{
-		printf("AddrCall.AddrMatchCode=%d\r\n", AddrMatchCode);
-		if(AddrMatchCode == 0x07)	// Addr
+		if(0x07 == (AddrMatchCode >> 1))	// Addr
 		{
+			hi2c->State = HAL_I2C_STATE_READY;
 			if(TransferDirection == 0x01)	// Read
 			{
-				HAL_I2C_Slave_Transmit_IT(&hi2c1, gI2CWriteBuffer, I2C_WRITE_BYTES);
-				return;
+				if(HAL_I2C_Slave_Transmit(&hi2c1, gI2CWriteBuffer, I2C_WRITE_BYTES, 1) == HAL_OK)
+				{
+					HAL_I2C_SlaveTxCpltCallback(&hi2c1);
+				}
+				else
+				{
+					printf("Err: HAL_I2C_Slave_Transmit.State=%x", hi2c->State);
+				}
 			}
 			else	//Write
 			{
-				HAL_I2C_Slave_Receive_IT(&hi2c1, gI2CReadBuffer, I2C_READ_BYTES);
-				return;
+				if(HAL_I2C_Slave_Receive(&hi2c1, gI2CReadBuffer, I2C_READ_BYTES, 1) == HAL_OK)
+				{
+					HAL_I2C_SlaveRxCpltCallback(&hi2c1);
+				}
+				else
+				{
+					printf("Err: HAL_I2C_Slave_Receive.State=%x", hi2c->State);
+				}
 			}
 		}
+		else
+		{
+			printf("Err: AddrMatchCode=%2x, Addr=%2x\r\n", AddrMatchCode, (AddrMatchCode >> 1));
+		}
+	if(HAL_I2C_EnableListen_IT(&hi2c1) != HAL_OK)
+	{
+		printf("HAL_I2C_EnableListen_IT Error\r\n");
+	}
 		__HAL_I2C_GENERATE_NACK(&hi2c1);
+	}
+	else
+	{
+		printf("Err: Instance\r\n");
 	}
 }
 
