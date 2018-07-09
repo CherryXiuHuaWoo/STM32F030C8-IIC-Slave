@@ -21,8 +21,6 @@
  
 void I2CSlaveInit(void)
 {
-//	HAL_I2C_Slave_Receive_IT(&hi2c1, gI2CReadBuffer, I2C_READ_BYTES);
-//	HAL_I2C_Slave_Transmit_IT(&hi2c1, gI2CWriteBuffer, I2C_WRITE_BYTES);
 	if(HAL_I2C_EnableListen_IT(&hi2c1) != HAL_OK)
 	{
 		printf("HAL_I2C_EnableListen_IT Error\r\n");
@@ -107,8 +105,6 @@ void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
 	if(hi2c->Instance == hi2c1.Instance)
 	{
-//		__HAL_I2C_CLEAR_FLAG(&hi2c1, I2C_FLAG_BERR| I2C_FLAG_ARLO | I2C_FLAG_OVR | I2C_FLAG_PECERR);
-////		__HAL_I2C_GENERATE_NACK(&hi2c1);
 		I2C_SaveReadDataToUsartUpdataBuffer(I2C_READ_BYTES);
 		gI2CReadDoneFlag = 1;
 	}
@@ -128,10 +124,6 @@ void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, ui
 				{
 					HAL_I2C_SlaveTxCpltCallback(&hi2c1);
 				}
-				else
-				{
-					printf("Err: HAL_I2C_Slave_Transmit.State=%x", hi2c->State);
-				}
 			}
 			else	//Write
 			{
@@ -139,36 +131,13 @@ void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, ui
 				{
 					HAL_I2C_SlaveRxCpltCallback(&hi2c1);
 				}
-				else
-				{
-					printf("Err: HAL_I2C_Slave_Receive.State=%x", hi2c->State);
-				}
 			}
 		}
-		else
-		{
-			printf("Err: AddrMatchCode=%2x, Addr=%2x\r\n", AddrMatchCode, (AddrMatchCode >> 1));
-		}
-	if(HAL_I2C_EnableListen_IT(&hi2c1) != HAL_OK)
-	{
-		printf("HAL_I2C_EnableListen_IT Error\r\n");
-	}
 		__HAL_I2C_GENERATE_NACK(&hi2c1);
 	}
-	else
-	{
-		printf("Err: Instance\r\n");
-	}
+	I2CSlaveInit();
 }
 
-
-void HAL_I2C_ListenCpltCallback(I2C_HandleTypeDef *hi2c)
-{
-	if(hi2c->Instance == hi2c1.Instance)
-	{
-		printf("HAL_I2C_ListenCpltCallback\r\n");
-	}
-}
 
 void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
@@ -176,6 +145,7 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 	{
 		gI2CErrorFlag = 1;
 		__HAL_I2C_GENERATE_NACK(&hi2c1);
+		I2CSlaveInit();
 	}
 }
 
