@@ -21,8 +21,9 @@
  
 void I2CSlaveInit(void)
 {
-	HAL_I2C_Slave_Receive_IT(&hi2c1, gI2CReadBuffer, I2C_BUFFER_SIZE);
-	HAL_I2C_Slave_Transmit_IT(&hi2c1, gI2CWriteBuffer, I2C_BUFFER_SIZE);
+	HAL_I2C_Slave_Receive_IT(&hi2c1, gI2CReadBuffer, I2C_READ_BYTES);
+	HAL_I2C_Slave_Transmit_IT(&hi2c1, gI2CWriteBuffer, I2C_WRITE_BYTES);
+	HAL_I2C_EnableListen_IT(&hi2c1);
 }
 
 
@@ -88,8 +89,9 @@ void I2C_SaveReadDataToUsartUpdataBuffer(uint32_t BufLen)
 		gUsartUpdateBuffer[bufIdx] = gI2CReadBuffer[bufIdx];
 	}	 
 }
- 
-void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c)
+
+
+void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
 	if(hi2c->Instance == hi2c1.Instance)
 	{
@@ -97,7 +99,8 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c)
 	}
 }
 
-void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
+
+void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
 	if(hi2c->Instance == hi2c1.Instance)
 	{
@@ -106,11 +109,44 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 	}
 }
 
+
+void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, uint16_t AddrMatchCode)
+{
+	if(hi2c->Instance == hi2c1.Instance)
+	{
+		printf("AddrCall.AddrMatchCode=%d\r\n", AddrMatchCode);
+		if(AddrMatchCode == 0x07)	// Addr
+		{
+			if(TransferDirection == 0x01)	// Read
+			{
+				HAL_I2C_Slave_Transmit_IT(&hi2c1, gI2CWriteBuffer, I2C_WRITE_BYTES);
+				return;
+			}
+			else	//Write
+			{
+				HAL_I2C_Slave_Receive_IT(&hi2c1, gI2CReadBuffer, I2C_READ_BYTES);
+				return;
+			}
+		}
+		__HAL_I2C_GENERATE_NACK(&hi2c1);
+	}
+}
+
+
+void HAL_I2C_ListenCpltCallback(I2C_HandleTypeDef *hi2c)
+{
+	if(hi2c->Instance == hi2c1.Instance)
+	{
+		printf("HAL_I2C_ListenCpltCallback\r\n");
+	}
+}
+
 void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
 	if(hi2c->Instance == hi2c1.Instance)
 	{
 		gI2CErrorFlag = 1;
+		__HAL_I2C_GENERATE_NACK(&hi2c1);
 	}
 }
 

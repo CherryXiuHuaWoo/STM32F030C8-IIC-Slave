@@ -7,11 +7,13 @@
  #define I2C_SLAVE_ADDR			0x07
  #define I2C_BUFFER_SIZE		64
  #define I2C_READ_BYTES			8
+ #define I2C_WRITE_BYTES		8
  
  extern uint8_t gI2CWrittenDoneFlag;
  extern uint8_t gI2CReadDoneFlag;
  extern uint8_t gI2CErrorFlag;
-
+ 
+void I2CSlaveInit(void);
 void I2C_WriteData(void);
 void I2C_ReadData(void);
 void I2C_UsartUpdateReadData(uint32_t BufLen);
