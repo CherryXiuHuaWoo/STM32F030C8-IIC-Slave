@@ -13,10 +13,8 @@
  extern uint8_t gI2CReadDoneFlag;
  extern uint8_t gI2CErrorFlag;
  
-void I2CSlaveInit(void);
-void I2C_WriteData(void);
-void I2C_ReadData(void);
-void I2C_UsartUpdateReadData(uint32_t BufLen);
+uint8_t RegisterControl(uint16_t RegisterAddress, uint8_t OperaBytesLength, uint8_t Operation);
+
 
 #endif /*I2CSlaveCommunication_H*/
 

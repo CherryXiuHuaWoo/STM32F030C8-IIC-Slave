@@ -1,12 +1,12 @@
 --cpu Cortex-M0
 "iic\startup_stm32f030x8.o"
-"iic\i2cslavecommunication.o"
 "iic\main.o"
 "iic\gpio.o"
 "iic\i2c.o"
 "iic\usart.o"
 "iic\stm32f0xx_it.o"
 "iic\stm32f0xx_hal_msp.o"
+"iic\registermaps.o"
 "iic\stm32f0xx_hal_i2c.o"
 "iic\stm32f0xx_hal_i2c_ex.o"
 "iic\stm32f0xx_hal_tim.o"

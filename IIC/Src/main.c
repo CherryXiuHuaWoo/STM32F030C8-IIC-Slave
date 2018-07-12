@@ -44,7 +44,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-#include "I2CSlaveCommunication.h"
+#include "RegisterMaps.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -110,23 +110,7 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-	if(gI2CReadDoneFlag)
-	{
-		I2C_UsartUpdateReadData(I2C_READ_BYTES);
-		gI2CReadDoneFlag = 0;
-	}
-	
-	if(gI2CWrittenDoneFlag)
-	{
-		printf("I2C Writen Done!\r\n");
-		gI2CWrittenDoneFlag = 0;
-	}
-	
-	if(gI2CErrorFlag)
-	{
-		printf("I2C Error!\r\n");
-		gI2CErrorFlag = 0;
-	}
+
   }
   /* USER CODE END 3 */
 

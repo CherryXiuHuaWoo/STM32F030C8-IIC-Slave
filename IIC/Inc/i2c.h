@@ -54,6 +54,21 @@
 extern I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN Private defines */
+#define I2C_SLAVE_ADDR		   0x07
+#define I2C_BUFFER_SIZE 	   64
+#define I2C_READ_BYTES		   8
+#define I2C_WRITE_BYTES 	   8
+#define I2C_DUMMYWRITE_Bytes   3
+
+#define I2C_WRITE_OPERATION		0
+#define I2C_READ_OPERATION		1
+#define I2C_DUMMYWRITTEN_DONE	1
+#define I2C_DUMMYWRITTEN_UNDONE	0
+
+
+extern uint8_t gI2CWrittenDoneFlag;
+extern uint8_t gI2CReadDoneFlag;
+extern uint8_t gI2CErrorFlag;
 
 /* USER CODE END Private defines */
 
@@ -62,6 +77,7 @@ extern void _Error_Handler(char *, int);
 void MX_I2C1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+void I2CSlaveInit(void);
 
 /* USER CODE END Prototypes */
 
